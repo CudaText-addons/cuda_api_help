@@ -15,3 +15,8 @@ section=commands
 caption=CudaText API help\Jump to section
 method=cmd_jump_to_section
 
+[item4]
+section=commands
+caption=CudaText API help\Update local wiki file
+method=cmd_update_local_wiki
+
