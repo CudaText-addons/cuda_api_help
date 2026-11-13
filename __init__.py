@@ -1,6 +1,7 @@
 from pathlib import Path
 from cudatext import *
 import os, requests, re
+from datetime import datetime
 
 class Command:
 
@@ -12,12 +13,15 @@ class Command:
         fn = str(dir / __name__ / 'cudatext_api.wiki')
         
         if prefer_local_wiki and os.path.isfile(fn):
-            file_open(fn)
+            if (datetime.now() - datetime.fromtimestamp(os.path.getmtime(fn))).total_seconds() < 86400:
+                file_open(fn)
+            else:
+                self.open_from_github()
         else:
             self.open_from_github()
             
     def fetch_wiki_text_from_github(self):
-        url = 'https://raw.githubusercontent.com/Alexey-T/CudaText/master/app/readme/wiki/cudatext_api.wiki'
+        url = 'https://raw.githubusercontent.com/Alexey-T/CudaText/master/wiki/cudatext_api.wiki'
         response = requests.get(url)
         
         page_text = None
@@ -34,11 +38,15 @@ class Command:
         ed.set_prop(PROP_LEXER_FILE, 'WikidPad')
     
     def open_from_github(self):
+        dir = Path(app_path(APP_DIR_PY))
+        fn = str(dir / __name__ / 'cudatext_api.wiki')
+        
         page_text = self.fetch_wiki_text_from_github()
-
         if page_text is not None:
-            file_open('')
-            self.set_editor_text(page_text)
+            with open(fn, 'w') as f:
+                f.write(page_text)
+
+        file_open(fn)
         
     def _cmd_jump_to_section(self, prefer_local_wiki=True):
         dir = Path(app_path(APP_DIR_PY))
