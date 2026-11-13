@@ -1,2 +1,5 @@
+2026.11.13
+[*] auto-update wiki-api
+
 2024.01.22
 initial version
